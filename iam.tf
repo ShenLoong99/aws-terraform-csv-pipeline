@@ -151,13 +151,25 @@ resource "aws_lambda_permission" "allow_s3_to_call_lambda" {
   source_arn    = aws_s3_bucket.raw.arn
 }
 
-// Managed CloudWatch Log Groups
-resource "aws_cloudwatch_log_group" "lambda_logs" {
+# Manage the Lambda Log Group
+resource "aws_cloudwatch_log_group" "lambda_log_group" {
   name              = "/aws/lambda/${aws_lambda_function.csv_cleaner.function_name}"
   retention_in_days = 7
 }
 
-resource "aws_cloudwatch_log_group" "glue_logs" {
-  name              = "/aws-glue/jobs/${aws_glue_job.transform_job.name}"
+# Manage the Glue Continuous Log Group
+resource "aws_cloudwatch_log_group" "glue_log_group" {
+  name              = "/aws-glue/jobs/csv-transform-job"
+  retention_in_days = 7
+}
+
+# Manage the default Glue Output Log Groups (to ensure they are deleted)
+resource "aws_cloudwatch_log_group" "glue_output_logs" {
+  name              = "/aws-glue/jobs/output"
+  retention_in_days = 7
+}
+
+resource "aws_cloudwatch_log_group" "glue_error_logs" {
+  name              = "/aws-glue/jobs/error"
   retention_in_days = 7
 }

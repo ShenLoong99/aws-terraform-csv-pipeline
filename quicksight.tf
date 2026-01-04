@@ -4,6 +4,17 @@ resource "aws_quicksight_account_subscription" "default" {
   authentication_method = "IAM_AND_QUICKSIGHT"
   edition               = "ENTERPRISE"
   notification_email    = var.email
+
+  # ADD THIS BLOCK: It forces Terraform to handle the 'protection' 
+  # resource before attempting to delete this subscription.
+  depends_on = [
+    aws_quicksight_account_settings.protection
+  ]
+}
+
+# allow destroy even if QuickSight is still subscribed
+resource "aws_quicksight_account_settings" "protection" {
+  termination_protection_enabled = false
 }
 
 # Update the Data Source to use the dynamic ARN from the user resource
@@ -41,9 +52,4 @@ resource "aws_quicksight_data_source" "s3_source" {
       "quicksight:UpdateDataSourcePermissions"
     ]
   }
-}
-
-// allow destroy even if QuickSight is still subscribed
-resource "aws_quicksight_account_settings" "protection" {
-  termination_protection_enabled = false
 }
