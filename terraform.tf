@@ -1,14 +1,14 @@
 terraform {
   required_version = ">= 1.5"
 
-  #   backend "remote" {
-  #     hostname     = "app.terraform.io"
-  #     organization = "my-terraform-aws-projects-2025"
+  backend "remote" {
+    hostname     = "app.terraform.io"
+    organization = "my-terraform-aws-projects-2025"
 
-  #     workspaces {
-  #       name = "bucket-list-tracker"
-  #     }
-  #   }
+    workspaces {
+      name = "aws-terraform-csv-pipeline"
+    }
+  }
 
   required_providers {
     aws = {
