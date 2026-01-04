@@ -68,7 +68,7 @@
 <div align="right"><a href="#readme-top">↑ Back to Top</a></div>
 
 <h2 id="architecture">Architecture</h2>
-<img src="assets/aws-terraform-csv-pipeline.jpg" alt="aws-terraform-csv-pipeline" width="800" /><br>
+<img src="assets/aws-terraform-csv-pipeline.jpg" alt="aws-terraform-csv-pipeline" width="800" />
 <img src="assets/all-s3-buckets.png" alt="all-s3-buckets" width="800" />
 <ol>
   <li><strong>Ingestion:</strong> CSV is uploaded to <code>S3 Raw</code>.</li>
