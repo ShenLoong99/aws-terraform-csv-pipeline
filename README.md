@@ -33,7 +33,7 @@
 <p>
   This project utilizes <strong>Infrastructure as Code (Terraform)</strong> to provision a complex multi-stage pipeline, ensuring that security roles (IAM), compute (Lambda/Glue), and analytics (Quick Suite) are perfectly synced without manual intervention.
 </p>
-<p align="center">
+<p>
   <strong>⚠️ NOTE:</strong> This project is <strong>not entirely within the AWS Free Tier</strong> due to the Amazon Quick Suite Enterprise Edition subscription. Estimated costs are <strong>$0.50 - $1.00 USD</strong> if infrastructure is destroyed immediately after testing.
 </p>
 <div align="right"><a href="#readme-top">↑ Back to Top</a></div>
@@ -68,7 +68,7 @@
 <div align="right"><a href="#readme-top">↑ Back to Top</a></div>
 
 <h2 id="architecture">Architecture</h2>
-<img src="assets/verify-upload-csv.png" alt="verify-upload-csv" width="800" /><br>
+<img src="assets/aws-terraform-csv-pipeline.jpg" alt="aws-terraform-csv-pipeline" width="800" /><br>
 <img src="assets/all-s3-buckets.png" alt="all-s3-buckets" width="800" />
 <ol>
   <li><strong>Ingestion:</strong> CSV is uploaded to <code>S3 Raw</code>.</li>
@@ -81,18 +81,28 @@
 <div align="right"><a href="#readme-top">↑ Back to Top</a></div>
 
 <h2 id="file-structure">File Structure</h2>
-<pre>CSV-DATA-PIPELINE/
-├── scripts/                     # Python logic
-│   ├── cleaning_lambda.py       # Pre-processing script for Lambda
-│   └── transform_job.py         # PySpark ETL script for Glue
-├── glue.tf                      # ETL Jobs, Crawlers, and Catalog Databases
-├── iam.tf                       # Scoped policies (Least Privilege)
-├── lambda.tf                    # Function config, S3 triggers, and DLQ
-├── main.tf                      # Provider settings and global tags
-├── quicksight.tf                # BI Subscription and Athena Data Sources
-├── s3.tf                        # Data Lake buckets and lifecycle rules
-├── variables.tf                 # Configuration (Region, Project Name)
-└── outputs.tf                   # Deployment metadata
+<pre>AWS-TERRAFORM-CSV-PIPELINE/
+├── .terraform/                # Terraform working directory
+├── assets/                    # Project documentation assets
+├── csv/                       # Sample data for testing
+├── glue_jobs/
+│   └── transform_job.py       # PySpark script (CSV to Parquet)
+├── scripts/
+│   ├── cleaning_lambda.py     # Python Lambda: Row-level cleaning
+│   └── lambda_function_payload.zip
+├── .gitignore
+├── .terraform.lock.hcl
+├── glue.tf                    # Glue Job & Database definitions
+├── iam.tf                     # IAM Roles & Policies
+├── lambda.tf                  # Lambda function & S3 triggers
+├── main.tf                    # AWS Provider & Global config
+├── outputs.tf                 # Terraform output values
+├── quicksight.tf              # QuickSight subscription & data sources
+├── README.md
+├── s3.tf                      # S3 Buckets & Lifecycle policies
+├── terraform.tf
+├── terraform.tfstate
+├── variables.tf               # Input variables
 </pre>
 <div align="right"><a href="#readme-top">↑ Back to Top</a></div>
 
@@ -170,20 +180,14 @@ Configure TF_VAR_email environment variables in workspace</pre>
   </li>
 </ol>
 
-<h3 style="color: #d9534f;">⚠️ Important: Manual Verification (Before Destruction)</h3>
-<p>To prevent <code>terraform destroy</code> failures and ensure the infrastructure is fully cleaned up, please perform these manual checks in the AWS Console:</p>
+<h3 style="color: #d9534f;">⚠️ Important Check</h3>
+<p>Please perform these manual checks in the AWS Console:</p>
 <ul>
   <li>
-    <strong>1. Disable Termination Protection:</strong> 
-    Even if <code>termination_protection_enabled = false</code> is set in your Terraform code, it is best practice to verify this in the UI. 
-    <br><i>Navigate to:</i> <strong>Quick Suite (QuickSight) > Manage QuickSight > Account Settings</strong>. 
-    Ensure the "Termination Protection" toggle is <b>OFF</b>.
-  </li>
-  <li>
-    <strong>2. Verify Custom IAM Role:</strong> 
+    <strong>Verify Custom IAM Role:</strong> 
     To ensure data accessibility, check that the account is using the custom role created by Terraform (<code>quicksight_custom_role</code>).
-    <br><i>Navigate to:</i> <strong>Quick Suite (QuickSight) > Manage QuickSight > Security & Permissions</strong>. 
-    Click <b>'Manage'</b> and verify that the S3 buckets are selected and the role matches the ARN defined in your <code>iam.tf</code>.<br>
+    <br><i>Navigate to:</i> <strong>Quick Suite (QuickSight) > Manage QuickSight > Permissions</strong>. 
+    Click <b>'Access to AWS Services'</b> and verify that the selected role matches the ARN defined in your <code>iam.tf</code>.<br>
     <img src="assets/access-aws-services.png" alt="ss-aws-services" width="800" />
   </li>
 </ul>
@@ -250,8 +254,8 @@ Configure TF_VAR_email environment variables in workspace</pre>
 <ul>
   <li>[x] <strong>Parquet Migration:</strong> Replaced CSV-only flow with optimized binary storage.</li>
   <li>[x] <strong>IAM Scoping:</strong> Removed wildcards for log groups and S3 paths.</li>
-  <li>[x] <strong>Automated Cleaning:</strong> Lambda-based row sanitization.</li>
-  <li>[x] <strong>Infrastructure as Code:</strong> Full deployment via Terraform.</li>
+  <li>[x] <strong>Automated Cleaning:</strong> Python Lambda removes empty rows before ETL.</li>
+  <li>[x] <strong>Event-Driven:</strong> Fully automated triggers from S3 upload to Glue execution.</li>
   <li>[ ] <strong>Multi-format Support:</strong> Extend the Lambda/Glue logic to handle JSON and Excel files.</li>
   <li>[ ] <strong>Data Validation:</strong> Add Great Expectations or Glue Data Quality to block malformed data from reaching the transformed layer.</li>
   <li>[ ] <strong>Real-time Alerting:</strong> Implement SNS notifications for Glue Job failures.</li>
@@ -304,5 +308,29 @@ Configure TF_VAR_email environment variables in workspace</pre>
   <li><strong>Serverless Execution:</strong> You only pay for the seconds your Lambda and Glue jobs run; there are no idle server costs.</li>
   <li><strong>QuickSight SPICE:</strong> Utilizing SPICE (Super-fast, Parallel, In-memory Calculation Engine) allows for fast dashboard performance without hitting S3 for every visual interaction.</li>
   <li><strong>Development Safety:</strong> <code>max_retries = 0</code> ensures failed Spark jobs don't burn credits through automatic restarts.</li>
+  <li><strong>Note on QuickSight:</strong> This project is <strong>not fully in the free tier</strong> due to the Enterprise Edition subscription. Estimated cost: <strong>$0.50 - $1.00 USD</strong> if cleaned up immediately after testing.</li>
+</ul>
+<div align="right"><a href="#readme-top">↑ Back to Top</a></div>
+
+<h2 id="cost-optimization">⚠️ Important: Cleanup </h2>
+<p>Before running terraform destroy, verify these settings manually in the AWS Console to avoid errors:</p>
+<ul>
+  <li>
+    <strong>Termination Protection:</strong> While the code sets <code>termination_protection_enabled = false</code>, manually verify this by going to <strong>QuickSight > Manage QuickSight > Account Settings</strong>. Ensure the toggle is <strong>Disabled</strong>.
+  </li>
+</ul>
+<div align="right"><a href="#readme-top">↑ Back to Top</a></div>
+
+<h2 id="acknowledgements">Acknowledgements</h2>
+<p>
+  Special thanks to <strong>Tech with Lucy</strong> for the architectural inspiration and excellent AWS tutorials that helped shape this pipeline.
+</p>
+<ul>
+  <li>
+    See her youtube channel here: <a href="https://www.youtube.com/@TechwithLucy" target="_blank">Tech With Lucy</a>
+  </li>
+  <li>
+    Watch her video here: <a href="https://www.youtube.com/watch?v=0hJxcBdRlYw" target="_blank">5 Intermediate AWS Cloud Projects To Get You Hired (2025)</a>
+  </li>
 </ul>
 <div align="right"><a href="#readme-top">↑ Back to Top</a></div>
