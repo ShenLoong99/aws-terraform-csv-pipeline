@@ -1,5 +1,12 @@
 <a id="readme-top"></a>
 
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![Unlicense License][license-shield]][license-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
+
 <div align="center">
   <h1 align="center">📊 Automated CSV Data Pipeline</h1>
   <p align="center">
@@ -334,3 +341,16 @@ Configure TF_VAR_email environment variables in workspace</pre>
   </li>
 </ul>
 <div align="right"><a href="#readme-top">↑ Back to Top</a></div>
+
+[contributors-shield]: https://img.shields.io/github/contributors/{{REPO_NAME}}.svg?style=for-the-badge
+[contributors-url]: https://github.com/{{REPO_NAME}}/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/{{REPO_NAME}}.svg?style=for-the-badge
+[forks-url]: https://github.com/{{REPO_NAME}}/network/members
+[stars-shield]: https://img.shields.io/github/stars/{{REPO_NAME}}.svg?style=for-the-badge
+[stars-url]: https://github.com/{{REPO_NAME}}/stargazers
+[issues-shield]: https://img.shields.io/github/issues/{{REPO_NAME}}.svg?style=for-the-badge
+[issues-url]: https://github.com/{{REPO_NAME}}/issues
+[license-shield]: https://img.shields.io/github/license/{{REPO_NAME}}.svg?style=for-the-badge
+[license-url]: https://github.com/{{REPO_NAME}}/blob/master/LICENSE.txt
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+[linkedin-url]: https://linkedin.com/in/si-kai-tan
