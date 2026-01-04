@@ -88,9 +88,12 @@ resource "aws_iam_policy" "quicksight_s3_access" {
     Version = "2012-10-17"
     Statement = [
       {
-        Action   = ["s3:GetObject", "s3:GetObjectVersion"]
-        Effect   = "Allow"
-        Resource = ["${aws_s3_bucket.transformed.arn}/*"]
+        Action = ["s3:GetObject", "s3:GetObjectVersion", "s3:ListBucket"]
+        Effect = "Allow"
+        Resource = [
+          aws_s3_bucket.transformed.arn,
+          "${aws_s3_bucket.transformed.arn}/*"
+        ]
       },
       {
         Action   = ["s3:ListBucket"]
@@ -117,10 +120,35 @@ resource "aws_iam_role" "quicksight_custom_role" {
   })
 }
 
+# add a policy statement to grants the glue:StartJobRun permission.
+resource "aws_iam_role_policy" "lambda_glue_trigger" {
+  name = "lambda_glue_trigger_policy"
+  role = aws_iam_role.lambda_exec.id # Ensure this matches your role name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action   = "glue:StartJobRun"
+        Effect   = "Allow"
+        Resource = "arn:aws:glue:${var.aws_region}:${data.aws_caller_identity.current.account_id}:job/csv-transform-job"
+      }
+    ]
+  })
+}
+
 # Attach the policy to the standard QuickSight service role
 resource "aws_iam_role_policy_attachment" "quicksight_s3_attach" {
   role       = aws_iam_role.quicksight_custom_role.name
   policy_arn = aws_iam_policy.quicksight_s3_access.arn
+}
+
+resource "aws_lambda_permission" "allow_s3_to_call_lambda" {
+  statement_id  = "AllowS3Invoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.csv_cleaner.function_name
+  principal     = "s3.amazonaws.com"
+  source_arn    = aws_s3_bucket.raw.arn
 }
 
 // Managed CloudWatch Log Groups

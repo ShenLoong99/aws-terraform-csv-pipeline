@@ -23,4 +23,16 @@ resource "aws_glue_job" "transform_job" {
     script_location = "s3://${aws_s3_bucket.scripts.id}/${aws_s3_object.upload_glue_script.key}"
     python_version  = "3"
   }
+
+  default_arguments = {
+    "--DATABASE" = aws_glue_catalog_database.pipeline_db.name
+    # Dynamically calculate the table name based on the bucket name
+    "--TABLE"                = replace(aws_s3_bucket.processed.id, "-", "_")
+    "--OUTPUT_PATH"          = "s3://${aws_s3_bucket.transformed.id}/transformed-data/"
+    "--DATABASE_BUCKET_NAME" = aws_s3_bucket.processed.id
+    # Required for the script to handle standard Glue arguments
+    "--job-language"                     = "python"
+    "--continuous-log-logGroup"          = "/aws-glue/jobs/csv-transform-job"
+    "--enable-continuous-cloudwatch-log" = "true"
+  }
 }

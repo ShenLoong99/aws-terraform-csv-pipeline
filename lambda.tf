@@ -39,4 +39,7 @@ resource "aws_s3_bucket_notification" "raw_upload_trigger" {
     events              = ["s3:ObjectCreated:*"]
     filter_suffix       = ".csv"
   }
+
+  # ensure the permission exists first
+  depends_on = [aws_lambda_permission.allow_s3_to_call_lambda]
 }

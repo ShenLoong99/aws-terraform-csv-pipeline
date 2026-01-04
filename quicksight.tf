@@ -6,17 +6,6 @@ resource "aws_quicksight_account_subscription" "default" {
   notification_email    = var.email
 }
 
-# Register the Admin user in QuickSight
-resource "aws_quicksight_user" "admin_user" {
-  email         = var.email # Use the email from your variables
-  identity_type = "IAM"
-  user_role     = "ADMIN"
-  # This links your current IAM identity to the QuickSight user
-  iam_arn = data.aws_caller_identity.current.arn
-  # A unique session name allows the registration to proceed
-  session_name  = "terraform-session"
-}
-
 # Update the Data Source to use the dynamic ARN from the user resource
 resource "aws_quicksight_data_source" "s3_source" {
   # Ensure the role and policy are ready first
@@ -41,7 +30,8 @@ resource "aws_quicksight_data_source" "s3_source" {
   }
 
   permission {
-    principal = aws_quicksight_user.admin_user.arn
+    # principal = aws_quicksight_user.admin_user.arn
+    principal = "arn:aws:quicksight:${var.aws_region}:${data.aws_caller_identity.current.account_id}:user/default/${split("/", data.aws_caller_identity.current.arn)[1]}"
     actions = [
       "quicksight:DescribeDataSource",
       "quicksight:DescribeDataSourcePermissions",
