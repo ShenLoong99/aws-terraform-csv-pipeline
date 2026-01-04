@@ -11,6 +11,9 @@ logger.setLevel(logging.INFO)
 s3 = boto3.client('s3')
 
 def handler(event, context):
+    s3 = boto3.client('s3')
+    glue = boto3.client('glue')
+
     try:
         # Get source bucket and key from event
         source_bucket = event['Records'][0]['s3']['bucket']['name']

@@ -15,8 +15,13 @@ resource "aws_glue_crawler" "processed_crawler" {
 
 # Reference that S3 location in the Glue Job
 resource "aws_glue_job" "transform_job" {
-  name     = "csv-transform-job"
-  role_arn = aws_iam_role.glue_role.arn
+  name              = "csv-transform-job"
+  role_arn          = aws_iam_role.glue_role.arn
+  glue_version      = "4.0"  # Use modern Spark 3.3
+  worker_type       = "G.1X" # Standard worker (4 vCPU, 16GB RAM)
+  number_of_workers = 2      # Smallest scale (2 workers)
+  max_retries       = 0      # Do not retry on failure (saves cost)
+  timeout           = 10     # Kill job if it runs longer than 10 mins
 
   command {
     # This URL points to the object we just uploaded

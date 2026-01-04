@@ -32,7 +32,7 @@ resource "aws_iam_role_policy" "lambda_policy" {
       {
         Action   = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"]
         Effect   = "Allow"
-        Resource = "arn:aws:logs:*:*:*"
+        Resource = "${aws_cloudwatch_log_group.lambda_log_group.arn}:*"
       }
     ]
   })
@@ -131,7 +131,7 @@ resource "aws_iam_role_policy" "lambda_glue_trigger" {
       {
         Action   = "glue:StartJobRun"
         Effect   = "Allow"
-        Resource = "arn:aws:glue:${var.aws_region}:${data.aws_caller_identity.current.account_id}:job/csv-transform-job"
+        Resource = aws_glue_job.transform_job.arn
       }
     ]
   })

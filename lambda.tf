@@ -5,7 +5,7 @@ resource "aws_lambda_function" "csv_cleaner" {
   function_name    = "csv_data_cleaner"
   role             = aws_iam_role.lambda_exec.arn
   handler          = "cleaning_lambda.handler"
-  runtime          = "python3.13"
+  runtime          = "python3.12"
   timeout          = 60
   memory_size      = 128
 
@@ -13,6 +13,10 @@ resource "aws_lambda_function" "csv_cleaner" {
     variables = {
       DEST_BUCKET = aws_s3_bucket.processed.id
     }
+  }
+
+  dead_letter_config {
+    target_arn = aws_sqs_queue.lambda_dlq.arn
   }
 }
 
@@ -42,4 +46,23 @@ resource "aws_s3_bucket_notification" "raw_upload_trigger" {
 
   # ensure the permission exists first
   depends_on = [aws_lambda_permission.allow_s3_to_call_lambda]
+}
+
+# Create the SQS Queue to act as the DLQ
+resource "aws_sqs_queue" "lambda_dlq" {
+  name = "csv-pipeline-lambda-dlq"
+}
+
+# Grant Lambda permission to send to SQS (Add to iam.tf)
+resource "aws_iam_role_policy" "lambda_sqs_dlq" {
+  name = "lambda_sqs_dlq_policy"
+  role = aws_iam_role.lambda_exec.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action   = "sqs:SendMessage"
+      Effect   = "Allow"
+      Resource = aws_sqs_queue.lambda_dlq.arn
+    }]
+  })
 }

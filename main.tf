@@ -1,5 +1,14 @@
 provider "aws" {
   region = var.aws_region
+
+  default_tags {
+    tags = {
+      Project     = "CSV-Data-Pipeline"
+      Environment = "Production"
+      ManagedBy   = "Terraform"
+      Owner       = "ShenLoong"
+    }
+  }
 }
 
 # Add this block to fetch your AWS Account ID dynamically
