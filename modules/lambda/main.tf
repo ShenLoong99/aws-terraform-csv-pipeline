@@ -22,6 +22,11 @@ resource "aws_lambda_function" "csv_cleaner" {
     }
   }
 
+  # Enable X-Ray Tracing for the Lambda function
+  tracing_config {
+    mode = "Active"
+  }
+
   dead_letter_config {
     target_arn = aws_sqs_queue.lambda_dlq.arn
   }
@@ -50,7 +55,8 @@ resource "aws_s3_bucket_notification" "raw_upload_trigger" {
 
 # Create the SQS Queue to act as the DLQ
 resource "aws_sqs_queue" "lambda_dlq" {
-  name = "csv-pipeline-lambda-dlq"
+  name                    = "csv-pipeline-lambda-dlq"
+  sqs_managed_sse_enabled = true # Fixes CKV_AWS_27
 }
 
 # Grant Lambda permission to send to SQS

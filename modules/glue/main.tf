@@ -5,9 +5,10 @@ resource "aws_glue_catalog_database" "pipeline_db" {
 
 # Discovers the schema of the processed data
 resource "aws_glue_crawler" "processed_crawler" {
-  database_name = aws_glue_catalog_database.pipeline_db.name
-  name          = "processed-data-crawler"
-  role          = aws_iam_role.glue_role.arn
+  database_name          = aws_glue_catalog_database.pipeline_db.name
+  name                   = "processed-data-crawler"
+  role                   = aws_iam_role.glue_role.arn
+  security_configuration = aws_glue_security_configuration.free_tier_config.name
 
   s3_target {
     path = "s3://${var.processed_bucket_id}/"
@@ -16,13 +17,14 @@ resource "aws_glue_crawler" "processed_crawler" {
 
 # Reference that S3 location in the Glue Job
 resource "aws_glue_job" "transform_job" {
-  name              = "csv-transform-job"
-  role_arn          = aws_iam_role.glue_role.arn
-  glue_version      = "4.0"  # Use modern Spark 3.3
-  worker_type       = "G.1X" # Standard worker (4 vCPU, 16GB RAM)
-  number_of_workers = 2      # Smallest scale (2 workers)
-  max_retries       = 0      # Do not retry on failure (saves cost)
-  timeout           = 10     # Kill job if it runs longer than 10 mins
+  name                   = "csv-transform-job"
+  role_arn               = aws_iam_role.glue_role.arn
+  glue_version           = "4.0"  # Use modern Spark 3.3
+  worker_type            = "G.1X" # Standard worker (4 vCPU, 16GB RAM)
+  number_of_workers      = 2      # Smallest scale (2 workers)
+  max_retries            = 0      # Do not retry on failure (saves cost)
+  timeout                = 10     # Kill job if it runs longer than 10 mins
+  security_configuration = aws_glue_security_configuration.free_tier_config.name
 
   command {
     # This URL points to the object we just uploaded
@@ -99,6 +101,28 @@ resource "aws_iam_role_policy" "glue_s3_access" {
       }
     ]
   })
+}
+
+resource "aws_glue_security_configuration" "free_tier_config" {
+  name = "glue-security-config"
+
+  encryption_configuration {
+    # CloudWatch Logs: Set to DISABLED to avoid KMS costs.
+    # Standard CloudWatch encryption still applies at the service level.
+    cloudwatch_encryption {
+      cloudwatch_encryption_mode = "DISABLED"
+    }
+
+    # Job Bookmarks: Set to DISABLED to avoid KMS costs.
+    job_bookmarks_encryption {
+      job_bookmarks_encryption_mode = "DISABLED"
+    }
+
+    # S3 Data: Use SSE-S3 (Free, managed by Amazon).
+    s3_encryption {
+      s3_encryption_mode = "SSE-S3"
+    }
+  }
 }
 
 # Manage the Glue Continuous Log Group
