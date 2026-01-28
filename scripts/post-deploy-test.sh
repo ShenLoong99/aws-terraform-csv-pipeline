@@ -10,7 +10,7 @@ echo "-------------------------------------------------------"
 
 # 1. Upload sample data to trigger the pipeline
 echo "📦 Uploading sample data to S3..."
-aws s3 cp ./csv/test_data.csv s3://${RAW_BUCKET}/test_data.csv
+aws s3 cp ./csv/customers-100.csv s3://${RAW_BUCKET}/test_data.csv
 
 # 2. Wait a few seconds for Lambda to trigger the Glue Job
 echo "⏳ Waiting for Lambda to trigger Glue Job..."
