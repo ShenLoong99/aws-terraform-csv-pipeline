@@ -2,7 +2,6 @@
 skip-check:
   # lambda-specific skips
   - CKV_AWS_117 # Ensure that AWS Lambda function is configured inside a VPC (Avoids ~$32/month (NAT Gateway))
-  - CKV_AWS_116 # Ensure that AWS Lambda function is configured for a Dead Letter Queue(DLQ) (Skip to avoid SQS costs)
   - CKV_AWS_115 # Ensure that AWS Lambda function is configured for function-level concurrent execution limit (Not relevant due to cost)
   - CKV_AWS_272 # Ensure AWS Lambda function is configured to validate code-signing (Complex setup, unnecessary for small projects)
   - CKV_AWS_173 # Check encryption settings for Lambda environmental variable (Avoids $1/mo KMS fee)
