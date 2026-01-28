@@ -18,28 +18,30 @@ sleep 20
 # Get the latest Run ID
 RUN_ID=$(aws glue get-job-runs --job-name ${GLUE_JOB_NAME} --max-items 1 --query "JobRuns[0].Id" --output text)
 
-if [ "$RUN_ID" == "None" ] || [ -z "$RUN_ID" ]; then
-    echo "❌ Error: No Glue Job run found."
+# Check if RUN_ID is empty or literally "None"
+if [[ -z "$RUN_ID" || "$RUN_ID" == "None" ]]; then
+    echo "❌ Error: Could not find a valid Glue Job run ID."
     exit 1
 fi
 
 echo "🔍 Monitoring Glue Job Run: $RUN_ID"
 
-# Custom Polling Loop (Fix for 'wait' error)
+# Custom Polling Loop
 while true; do
     # Get current status
     STATUS=$(aws glue get-job-run --job-name ${GLUE_JOB_NAME} --run-id ${RUN_ID} --query "JobRun.JobRunState" --output text)
 
     echo "Current Status: $STATUS"
 
-    if [ "$STATUS" == "SUCCEEDED" ]; then
+    # Use [[ == *WORD* ]] to check if text contains "SUCCEED"
+    if [[ "$STATUS" == *"SUCCEED"* ]]; then
         echo "✅ Glue Job Completed Successfully!"
         break
-    elif [ "$STATUS" == "FAILED" ] || [ "$STATUS" == "STOPPED" ] || [ "$STATUS" == "TIMEOUT" ]; then
+    # Similarly check for failures
+    elif [[ "$STATUS" == *"FAIL"* ]] || [[ "$STATUS" == *"STOP"* ]] || [[ "$STATUS" == *"TIMEOUT"* ]]; then
         echo "❌ Glue Job Failed with status: $STATUS"
         exit 1
     fi
 
-    # Wait before checking again
     sleep 30
 done
