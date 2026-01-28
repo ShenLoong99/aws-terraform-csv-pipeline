@@ -308,7 +308,7 @@ This section is automatically updated with the latest infrastructure details.
          <tbody>
             <tr>
                <td><code>BOT_APP_ID</code></td>
-               <td>The unique numerical ID assigned to your GitHub App.</td>
+               <td>The unique numerical ID assigned to GitHub App.</td>
                <td>App Settings > General</td>
             </tr>
             <tr>
@@ -324,7 +324,7 @@ This section is automatically updated with the latest infrastructure details.
 
 <h2 id="usage">Usage & Testing</h2>
 <h3>🧪 Testing Steps in AWS Console</h2>
-<p>Follow these steps to verify your pipeline is working correctly:</p>
+<p>Follow these steps to verify the pipeline is working correctly:</p>
 <ol>
   <li>
     <strong>Upload to Raw Bucket:</strong>
@@ -350,7 +350,7 @@ This section is automatically updated with the latest infrastructure details.
     </ul>
   </li>
   <li>
-    <strong>Quick Suite Registration:</strong> Open <strong>Amazon QuickSight</strong>. If it's your first time, follow the prompts to sign up for the <strong>Enterprise Edition</strong> and register your notification email.<br>
+    <strong>Quick Suite Registration:</strong> Open <strong>Amazon QuickSight</strong>. If it's first time, follow the prompts to sign up for the <strong>Enterprise Edition</strong> and register the notification email.<br>
     <img src="assets/register-quick-suite-user.png" alt="register-quick-suite-user" />
   </li>
   <li>
@@ -358,7 +358,7 @@ This section is automatically updated with the latest infrastructure details.
     <ul>
       <li>Click <strong>Datasets > New dataset > S3</strong>.</li>
       <li>
-        Enter a name and the <strong>S3 URI</strong> of your <code>manifest.json</code> file found in the transformed bucket.<br>
+        Enter a name and the <strong>S3 URI</strong> of the <code>manifest.json</code> file found in the transformed bucket.<br>
         <img src="assets/s3-manifest-object.png" alt="s3-manifest-object" /><br>
         <img src="assets/upload-manifest-s3-uri.png" alt="upload-manifest-s3-uri" />
       </li>
@@ -374,7 +374,7 @@ This section is automatically updated with the latest infrastructure details.
     <img src="assets/dashboard-page.png" alt="analdashboard-page" />
   </li>
   <li>
-    <strong>Schedule Refresh (Optional):</strong> In the <strong>Datasets</strong> tab, select your dataset and go to <strong>Refresh</strong>. Click <strong>Add new schedule</strong> to keep your charts updated automatically.
+    <strong>Schedule Refresh (Optional):</strong> In the <strong>Datasets</strong> tab, select the dataset and go to <strong>Refresh</strong>. Click <strong>Add new schedule</strong> to keep the charts updated automatically.
   </li>
 </ol>
 <div align="right"><a href="#readme-top">↑ Back to Top</a></div>
@@ -452,7 +452,7 @@ This section is automatically updated with the latest infrastructure details.
     <ul>
       <li><strong>Serverless Foundations:</strong> By using <strong>AWS Lambda</strong> and <strong>AWS Glue</strong>, the architecture offloads infrastructure management to AWS, ensuring high availability and automatic scaling without the need to manage servers.</li>
       <li><strong>Error Handling (DLQ):</strong> The implementation includes an <strong>Amazon SQS Dead Letter Queue (DLQ)</strong> for the Lambda function, which prevents data loss by capturing failed events for later inspection and replay.</li>
-      <li><strong>Data Integrity:</strong> <strong>S3 Versioning</strong> is enabled in your <code>main.tf</code>, allowing you to recover original CSV files even if they are accidentally deleted or overwritten during a transform job.</li>
+      <li><strong>Data Integrity:</strong> <strong>S3 Versioning</strong> is enabled in <code>main.tf</code>, allowing to recover original CSV files even if they are accidentally deleted or overwritten during a transform job.</li>
     </ul>
   </li>
   <li>
@@ -461,7 +461,7 @@ This section is automatically updated with the latest infrastructure details.
     <ul>
       <li><strong>Mechanical Sympathy:</strong> Although not using Parquet, I achieve performance efficiency by using <strong>AWS Glue (Spark)</strong> for data heavy-lifting. Spark is naturally efficient at processing CSV data in parallel across multiple worker nodes.</li>
       <li><strong>Elastic Scaling:</strong> Both Lambda and Glue scale automatically based on the volume of incoming data, ensuring performance remains consistent whether processing a single small file or a massive batch</li>
-      <li><strong>Event-Driven Triggering:</strong> Resources are only active when data is present, ensuring that your compute resources (Lambda and Glue) are used exactly when needed and not a second longer</li>
+      <li><strong>Event-Driven Triggering:</strong> Resources are only active when data is present, ensuring that compute resources (Lambda and Glue) are used exactly when needed and not a second longer</li>
     </ul>
   </li>
   <li>
@@ -469,20 +469,20 @@ This section is automatically updated with the latest infrastructure details.
     <p>The project minimizes costs by adopting a "pay-for-what-you-use" model and managing the data lifecycle.</p>
     <ul>
       <li><strong>Worker Capping:</strong> Glue Jobs are limited to <code>G.1X</code> worker types and 2 workers max.</li>
-      <li><strong>Serverless Execution:</strong> You only pay for the seconds your Lambda and Glue jobs run; there are no idle server costs.</li>
+      <li><strong>Serverless Execution:</strong> Only pay for the seconds Lambda and Glue jobs run; there are no idle server costs.</li>
       <li><strong>QuickSight SPICE:</strong> Utilizing SPICE (Super-fast, Parallel, In-memory Calculation Engine) allows for fast dashboard performance without hitting S3 for every visual interaction.</li>
       <li><strong>Development Safety:</strong> <code>max_retries = 0</code> ensures failed Spark jobs don't burn credits through automatic restarts.</li>
-      <li><strong>Consumption Model:</strong> Only pay for the seconds that your Lambda function and Glue jobs are running. There are no idle costs for "always-on" servers.</li>
+      <li><strong>Consumption Model:</strong> Only pay for the seconds that the Lambda function and Glue jobs are running. There are no idle costs for "always-on" servers.</li>
       <li><strong>Managed Lifecycle Policies:</strong> Terraform code includes <strong>S3 Lifecycle Rules</strong> that delete data after 30 days and delete incomplete uploads to save on storage costs.</li>
-      <li><strong>Managed Services:</strong> Utilizing managed services like QuickSight and Glue reduces the operational overhead and "hidden costs" of managing your own BI and ETL infrastructure.</li>
+      <li><strong>Managed Services:</strong> Utilizing managed services like QuickSight and Glue reduces the operational overhead and "hidden costs" of managing BI and ETL infrastructure.</li>
       <li><strong>Note on QuickSight:</strong> This project is <strong>not fully in the free tier</strong> due to the Enterprise Edition subscription. Estimated cost: <strong>$0.50 - $1.00 USD</strong> if cleaned up immediately after testing.</li>
     </ul>
   </li>
   <li>
     <strong>Sustainability</strong>
-    <p>Sustainability focuses on minimizing the environmental impact of your workloads.</p>
+    <p>Sustainability focuses on minimizing the environmental impact of the workloads.</p>
     <ul>
-      <li><strong>Shared Responsibility:</strong> By opting for a fully serverless architecture, you maximize the utilization of AWS's underlying hardware, which reduces the total energy required per unit of work compared to running underutilized EC2 instances.</li>
+      <li><strong>Shared Responsibility:</strong> By opting for a fully serverless architecture, able to maximize the utilization of AWS's underlying hardware, which reduces the total energy required per unit of work compared to running underutilized EC2 instances.</li>
     </ul>
   </li>
 </ol>
