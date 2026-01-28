@@ -22,3 +22,8 @@ output "aws_region" {
   description = "AWS Region to deploy resources"
   value       = var.aws_region
 }
+
+output "glue_job_name" {
+  description = "Name of the glue job"
+  value       = module.glue.glue_job_name
+}
