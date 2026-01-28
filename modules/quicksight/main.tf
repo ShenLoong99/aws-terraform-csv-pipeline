@@ -1,10 +1,6 @@
 # Add this block to fetch your AWS Account ID dynamically
 data "aws_caller_identity" "current" {}
 
-# data "aws_iam_session_context" "current" {
-#   arn = data.aws_caller_identity.current.arn
-# }
-
 # Random suffix id for dynamic bucket name creation
 resource "random_id" "suffix" {
   byte_length = 4
@@ -16,17 +12,14 @@ resource "aws_quicksight_account_subscription" "default" {
   authentication_method = "IAM_AND_QUICKSIGHT"
   edition               = "ENTERPRISE"
   notification_email    = var.email
-
-  # ADD THIS BLOCK: It forces Terraform to handle the 'protection'
-  # resource before attempting to delete this subscription.
-  depends_on = [
-    aws_quicksight_account_settings.protection
-  ]
 }
 
 # allow destroy even if QuickSight is still subscribed
 resource "aws_quicksight_account_settings" "protection" {
+  aws_account_id                 = data.aws_caller_identity.current.account_id # Add this to ensure it targets the correct account
   termination_protection_enabled = false
+
+  depends_on = [aws_quicksight_account_subscription.default]
 }
 
 # Update the Data Source to use the dynamic ARN from the user resource
