@@ -10,10 +10,10 @@ output "bucket_arn" {
 
 output "manifest_key" {
   description = "The key (path) of the manifest file if it was uploaded"
-  value       = aws_s3_object.manifest[*].key
+  value       = one(aws_s3_object.manifest[*].key)
 }
 
 output "upload_glue_script_key" {
   description = "The key (path) of the glue script if it was uploaded"
-  value       = aws_s3_object.upload_glue_script[*].key
+  value       = one(aws_s3_object.upload_glue_script[*].key)
 }
