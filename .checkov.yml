@@ -1,0 +1,20 @@
+# Use this to skip checks that incur high costs or break Free Tier eligibility
+skip-check:
+  # lambda-specific skips
+  - CKV_AWS_117 # Ensure that AWS Lambda function is configured inside a VPC (Avoids ~$32/month (NAT Gateway))
+  - CKV_AWS_115 # Ensure that AWS Lambda function is configured for function-level concurrent execution limit (Not relevant due to cost)
+  - CKV_AWS_272 # Ensure AWS Lambda function is configured to validate code-signing (Complex setup, unnecessary for small projects)
+  - CKV_AWS_173 # Check encryption settings for Lambda environmental variable (Avoids $1/mo KMS fee)
+
+  # S3-specific skips
+  - CKV_AWS_145 # Ensure that S3 buckets are encrypted with KMS by default (Avoids $1/mo KMS fee)
+  - CKV_AWS_18  # Ensure the S3 bucket has access logging enabled (Saves on request/storage costs)
+  - CKV2_AWS_62 # Ensure S3 buckets should have event notifications enabled (Irrelevant)
+  - CKV_AWS_144 # Ensure that S3 bucket has cross-region replication enabled (Prevents doubling storage costs)
+
+  # Cloudwatch-specific skips
+  - CKV_AWS_158 # Ensure that CloudWatch Log Group is encrypted by KMS (Avoid KMS cost)
+  - CKV_AWS_338 # Ensure CloudWatch log groups retains logs for at least 1 year (Not necessary and save cost)
+
+  # GitHub Action skips
+  - CKV2_GHA_1 # Ensure top-level permissions are not set to write-all (Intentional skip as the workflows requires the permission)
