@@ -106,6 +106,7 @@ resource "aws_iam_role_policy" "glue_s3_access" {
 resource "aws_glue_security_configuration" "free_tier_config" {
   name = "glue-security-config"
 
+  # checkov:skip=CKV_AWS_99: Encryption for CloudWatch and Bookmarks requires KMS (not free). S3 data is already protected by SSE-S3.
   encryption_configuration {
     # CloudWatch Logs: Set to DISABLED to avoid KMS costs.
     # Standard CloudWatch encryption still applies at the service level.
