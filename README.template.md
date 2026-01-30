@@ -511,20 +511,6 @@ This section is automatically updated with the latest infrastructure details.
 </ul>
 <div align="right"><a href="#readme-top">↑ Back to Top</a></div>
 
-<h2 id="acknowledgements">Acknowledgements</h2>
-<p>
-  Special thanks to <strong>Tech with Lucy</strong> for the architectural inspiration and excellent AWS tutorials that helped shape this pipeline.
-</p>
-<ul>
-  <li>
-    See her youtube channel here: <a href="https://www.youtube.com/@TechwithLucy" target="_blank">Tech With Lucy</a>
-  </li>
-  <li>
-    Watch her video here: <a href="https://www.youtube.com/watch?v=hiE0El3zs1Y" target="_blank">5 Beginner AWS Cloud Projects To Get You Hired (2025)</a>
-  </li>
-</ul>
-<div align="right"><a href="#readme-top">↑ Back to Top</a></div>
-
 [contributors-shield]: https://img.shields.io/github/contributors/{{GITHUB_USER}}/{{REPO_NAME}}.svg?style=for-the-badge
 [contributors-url]: {{REPO_URL}}/graphs/contributors
 
